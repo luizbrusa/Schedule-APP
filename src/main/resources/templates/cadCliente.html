@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+   	<title>Cadastro de Clientes</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+   	
+	<link th:href="@{/css/cliente.css}" rel="stylesheet"  />
+</head>
+<body>
+	<div>
+		<button type="button" class="btn btn-primary" th:onclick="|window.location.href='@{/}'|">Voltar para o Calendário</button>
+	</div>
+	<br>
+	<form class="row align-items-center" id="formCadastroCliente">
+	  <div class="col-md-1">
+	    <label class="form-label" for="id">Id</label>
+	    <div class="input-group">
+	      <input type="text" class="form-control" id="id" readonly="readonly">
+	    </div>
+	  </div>
+	  <div class="col-md-5">
+	    <label class="form-label" for="nome">Nome</label>
+	    <div class="input-group">
+	      <input type="text" class="form-control" id="nome" onchange="preencheApelido()">
+	    </div>
+	  </div>
+	  <div class="col-md-2">
+	    <label class="form-label" for="apelido">Apelido</label>
+	    <div class="input-group">
+	      <input type="text" class="form-control" id="apelido">
+	    </div>
+	  </div>
+	  <div class="col-md-2">
+	    <label class="form-label" for="valor">Valor</label>
+	    <div class="input-group">
+			<span class="input-group-text">$</span>
+			<input type="number" class="form-control" id="valor">
+			<span class="input-group-text">.00</span>
+	    </div>
+	  </div>
+	  <div class="col-md-2">
+	    <label class="form-label" for="sDiaSemana">Dia da Semana</label>
+	    <select class="form-select" id="sDiaSemana">
+	      <option selected>Selecione...</option>
+	      <option value="SUNDAY">Domingo</option>
+	      <option value="MONDAY">Segunda-Feira</option>
+	      <option value="TUESDAY">Terça-Feira</option>
+	      <option value="WEDNESDAY">Quarta-Feira</option>
+	      <option value="THURSDAY">Quinta-Feira</option>
+	      <option value="FRIDAY">Sexta-Feira</option>
+	      <option value="SATURDAY">Sábado</option>
+	    </select>
+	  </div>
+
+	  <div class="col-md-5">
+	    <label class="form-label" for="endereco">Endereço</label>
+	    <div class="input-group">
+	      <input type="text" class="form-control" id="endereco">
+	    </div>
+	  </div>
+	  <div class="col-md-2">
+	    <label class="form-label" for="telefone">Telefone</label>
+	    <div class="input-group">
+	      <input type="text" class="form-control" id="telefone">
+	    </div>
+	  </div>
+	  <div class="col-md-2">
+	    <label class="form-label" for="sFormaPagamento">Forma de Pagamento</label>
+	    <select class="form-select" id="sFormaPagamento">
+	      <option selected>Selecione...</option>
+	      <option value="CASH">Dinheiro</option>
+	      <option value="CHECK">Cheque</option>
+	      <option value="TRANSFER">Transferência Bancária</option>
+	    </select>
+	  </div>
+	  <div class="col-md-3">
+	    <label class="form-label" for="sFrequencia">Horário</label>
+		<div class="input-group">
+		  <input type="time" class="form-control" id="horaInicio" min="07:00" max="20:00">
+		  <span class="input-group-text">às</span>
+		  <input type="time" class="form-control" id="horaFim" min="07:00" max="20:00">
+		</div>
+	  </div>
+
+	  <div class="col-md-3">
+	    <label class="form-label" for="sFrequencia">Frequência</label>
+	    <select class="form-select" id="sFrequencia">
+	      <option selected>Selecione...</option>
+	      <option value="WEEKLY">Semanal</option>
+	      <option value="FORTNIGHT">Quinzenal</option>
+	      <option value="MONTHLY">Mensal</option>
+	    </select>
+	  </div>
+	  <div class="col-md-3">
+	  	<br>
+		<div class="form-check form-switch">
+			<input class="form-check-input" type="checkbox" id="ativo" checked>
+			<label class="form-check-label" for="ativo">Ativo</label>
+		</div>
+	  </div>
+	  <div class="col-md-3">
+	  	<br>
+		<div class="form-check">
+		  <input class="form-check-input" type="radio" name="tipoLimpeza" id="tlCompleta" value="COMPLETA">
+		  <label class="form-check-label" for="tlCompleta">Completa</label>
+		</div>
+	  </div>
+	  <div class="col-md-3">
+	  	<br>
+		<div class="form-check">
+		  <input class="form-check-input" type="radio" name="tipoLimpeza" id="tlDownstairs" value="DOWNSTAIRS">
+		  <label class="form-check-label" for="tlDownstairs">Downstairs</label>
+		</div>
+	  </div>
+
+	  <div class="col-md-12">
+	  	<br>
+		<div class="input-group">
+		  <textarea class="form-control" placeholder="Observações" id="observacao"></textarea>
+		</div>
+	  </div>
+
+	  <div class="col-md-12">
+		<br>
+	  </div>
+	</form>
+	<button type="button" class="btn btn-primary" onclick="salvarCliente()">Salvar</button>
+	<button type="button" class="btn btn-secondary" onclick="document.getElementById('formCadastroCliente').reset()">Novo</button>
+	<button type="button" class="btn btn-danger" onclick="excluirClienteTelaPrincipal()">Excluir</button>
+	<button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#clienteModal">Pesquisar</button>
+
+	<br>
+	<div class="col-12">
+		<table class="table table-striped" id="tabelaClientes">
+		  <thead>
+		    <tr>
+		      <th scope="col">Id</th>
+		      <th scope="col">Nome</th>
+		      <th scope="col">Valor</th>
+		      <th scope="col">Telefone</th>
+		      <th scope="col">Dia da Semana</th>
+		      <th scope="col">Forma de Pagamento</th>
+		      <th scope="col">Frequência</th>
+		      <th scope="col">Ativo</th>
+		      <th scope="col">...</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		  </tbody>
+		</table>
+	</div>
+
+	<div class="modal fade" id="clienteModal" tabindex="-1" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="clienteModalLabel">Pesquisa de Clientes</h5>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body">
+	      	<form>
+				<div class="mb-3">
+				  <label for="nomeBusca" class="form-label">Nome</label>
+				  <input type="text" class="form-control" id="nomeBusca">
+				</div>	
+	        	<button type="button" class="btn btn-warning" onclick="pesquisaClientesModal()">Pesquisar</button>
+	      	</form>
+	      	<div style="height: 300px; overflow: scroll;">
+				<table class="table" id="tabelaClientesModal">
+				  <thead>
+				    <tr>
+				      <th scope="col">Id</th>
+				      <th scope="col" style="width: 70%">Nome</th>
+				      <th scope="col">Selecionar</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				  </tbody>
+				</table>
+			</div>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+	<!-- JQuery JS -->
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	
+	<!-- Bootstrap JS -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js"></script>
+    
+    <script type="text/javascript" th:src="@{/js/cliente.js}"></script>
+</body>
+</html>

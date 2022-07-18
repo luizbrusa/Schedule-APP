@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>Schedule</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Full Calendar CSS -->
+	<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/main.min.css' rel='stylesheet'>
+
+	<link th:href="@{/css/schedule.css}" rel="stylesheet"  />
+</head>
+<body>
+	<div class="col-md-2" id='external-events'>
+		<p><strong>Clientes</strong></p>
+		<div id="clientes"></div>
+		<br>
+		<p><button type="button" class="btn btn-secondary" style="width: 100%" th:onclick="|window.location.href='@{/cliente/cadastro}'|">Novo Cliente</button></p>
+		<p><button type="button" class="btn btn-warning" style="width: 100%" data-bs-toggle="modal" onclick="programarMesesModal()">Programar Mês</button></p>
+		<br>
+		<p><a th:href="@{/swagger-ui/index.html}">Acessar API</a></p>
+	</div>
+
+	<div class="col-md-10" id='calendar-container'>
+		<div id='calendar'></div>
+	</div>
+  
+	<div class="modal fade" id="eventoModal" tabindex="-1" aria-labelledby="eventoModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="eventoModalLabel">Cadastro</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body row align-items-center">
+					<div class="col-md-12">
+						<input type="hidden" id="idCliente">
+						<input type="hidden" id="allDay">
+						<label class="form-label" for="cliente">Cliente</label>
+						<div class="input-group">
+							<input type="text" class="form-control" id="cliente" readonly="readonly">
+						</div>
+					</div>
+	
+					<div class="col-md-2">
+						<label class="form-label" for="id">Id</label>
+						<div class="input-group">
+							<input type="text" class="form-control" id="id" readonly="readonly">
+						</div>
+					</div>
+	
+					<div class="col-md-10">
+						<label class="form-label" for="start">Título</label>
+						<div class="input-group">
+							<input type="text" class="form-control" id="title">
+						</div>
+					</div>
+
+					<div class="col-md-5">
+						<label class="form-label" for="start">Data</label>
+						<div class="input-group">
+							<input type="date" class="form-control" id="start">
+						</div>
+					</div>
+					<div class="col-md-7">
+						<label class="form-label" for="sFrequencia">Horário</label>
+						<div class="input-group">
+							<input type="time" class="form-control" id="startTime" min="07:00" max="20:00">
+							<span class="input-group-text">às</span>
+							<input type="time" class="form-control" id="endTime" min="07:00" max="20:00">
+						</div>
+					</div>
+				</div>
+			
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" onclick="salvarEventoModal()">Salvar</button>
+					<button type="button" class="btn btn-danger" onclick="excluirEventoModal()">Excluir</button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="programarMesesModal" tabindex="-1" aria-labelledby="programarMesesModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="programarMesesModalLabel">Programar Meses</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body row align-items-center">
+					<div class="col-md-3">
+						<label class="form-label" for="anoPrograma">Ano</label>
+						<div class="input-group">
+							<input type="number" class="form-control" id="anoPrograma" min="2020" max="2050" value="2021" required onblur="validaMinMax()">
+						</div>
+					</div>
+					<div class="col-md-6">
+						<label class="form-label" for="sMesPrograma">Mês Inicial</label>
+						<select class="form-select" id="sMesPrograma" required onchange="validaMinMax()">
+							<option value="01">Janeiro</option>
+							<option value="02">Fevereiro</option>
+							<option value="03">Março</option>
+							<option value="04">Abril</option>
+							<option value="05">Maio</option>
+							<option value="06">Junho</option>
+							<option value="07">Julho</option>
+							<option value="08">Agosto</option>
+							<option value="09">Setembro</option>
+							<option value="10">Outubro</option>
+							<option value="11">Novembro</option>
+							<option value="12">Dezembro</option>
+						</select>
+					</div>
+
+					<div class="col-md-3">
+						<label class="form-label" for="mesesPrograma">Quantidade</label>
+						<div class="input-group">
+							<input type="number" class="form-control" id="mesesPrograma" min="1" max="12" required onblur="validaMinMax()">
+						</div>
+					</div>
+				</div>
+			
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" onclick="salvarProgramacaoMeses()">Executar</button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+  <!-- JQuery JS -->
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js"></script>
+
+  <!-- Full Calendar JS -->
+  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/main.min.js'></script>
+  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/locales-all.js'></script>
+  
+  <!-- Moment JS -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js'></script>
+  
+  <script th:src="@{/js/schedule.js}" type="text/javascript"></script>
+</body>
+</html>
