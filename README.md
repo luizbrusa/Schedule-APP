@@ -8,7 +8,8 @@
 
 This project uses several open source packages:
 
-- [Full Calendar](https://github.com/fullcalendar/fullcalendar)
+- [Java](https://www.java.com/en/)
+- [Full Calendar JS](https://github.com/fullcalendar/fullcalendar)
 - [Thymeleaf](https://www.thymeleaf.org/)
 - [Spring Boot](https://spring.io/projects/spring-boot)
 - [Bootstrap](https://getbootstrap.com/)
