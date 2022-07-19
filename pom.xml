@@ -14,7 +14,9 @@
 	<name>schedule-app</name>
 	<description>Schedule App</description>
 	<properties>
-		<java.version>18.0.1</java.version>
+		<java.version>18</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.test.skip>true</maven.test.skip>
 	</properties>
 	<dependencies>
 		<dependency>
