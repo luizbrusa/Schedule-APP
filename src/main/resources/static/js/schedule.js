@@ -181,7 +181,7 @@ function salvarEventoModal(){
 function salvarEventoDrop(info) {
 	$.ajax({
 		method: "GET",
-		url: "/scheduleAPP/" + info.event.id,
+		url: "/scheduleAPP/evento/" + info.event.id,
 		success: function(response) {
 			var idCliente = null;
 			if (response.cliente != null) {

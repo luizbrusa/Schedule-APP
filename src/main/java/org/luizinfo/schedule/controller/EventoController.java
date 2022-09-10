@@ -6,7 +6,9 @@ import java.util.Optional;
 import org.luizinfo.schedule.model.Cliente;
 import org.luizinfo.schedule.model.Evento;
 import org.luizinfo.schedule.repository.ICliente;
+import org.luizinfo.schedule.repository.ICustomEventoImpl;
 import org.luizinfo.schedule.repository.IEvento;
+import org.luizinfo.schedule.service.SequenceGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,9 @@ public class EventoController implements CrudController<Evento> {
 
 	@Autowired
 	private IEvento iEvento;
+	
+	@Autowired
+	private ICustomEventoImpl iCustomEventoImpl;
 
 	@Autowired
 	private ICliente iCliente;
@@ -33,12 +38,12 @@ public class EventoController implements CrudController<Evento> {
 	@Override
 	public ResponseEntity<?> listar() {
 		
-		List<Cliente> clientes = iCliente.findAll();
+		List<Evento> eventos = iEvento.findAll();
 		
-		if (clientes.size() > 0) {
-			return new ResponseEntity<List<Cliente>>(clientes, HttpStatus.OK);
+		if (eventos.size() > 0) {
+			return new ResponseEntity<List<Evento>>(eventos, HttpStatus.OK);
 		} else {
-			return new ResponseEntity<String>("Não foram encontrados clientes cadastrados!", HttpStatus.OK);
+			return new ResponseEntity<String>("Não foram encontrados eventos cadastrados!", HttpStatus.OK);
 		}
 	}
 
@@ -49,6 +54,7 @@ public class EventoController implements CrudController<Evento> {
 			return new ResponseEntity<String>("ID do Registro não deve ser Informado para cadastrar!", HttpStatus.BAD_REQUEST);
 		}
 		
+		objeto.setId(SequenceGeneratorService.generateSequence(Evento.SEQUENCE_NAME));
 		Evento eventoAux = iEvento.save(objeto);
 		
 		return new ResponseEntity<Evento>(eventoAux, HttpStatus.CREATED);
@@ -85,6 +91,9 @@ public class EventoController implements CrudController<Evento> {
 		Optional<Evento> eventoOp = iEvento.findById(id);
 		
 		if (eventoOp.isPresent()) {
+			if (eventoOp.get().getCliente() != null) {
+				eventoOp.get().setCliente(iCliente.findById(eventoOp.get().getCliente().getId()).get());
+			}
 			return new ResponseEntity<Evento>(eventoOp.get(), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<String>("Registro não Encontrado com o ID: " + id, HttpStatus.BAD_REQUEST);
@@ -102,9 +111,12 @@ public class EventoController implements CrudController<Evento> {
 			
 			if (eventoOp.isPresent()) {
 				if (excluirFuturos) {
-					List<Evento> eventos = iEvento.findEventosFuturosCliente(eventoOp.get().getCliente(), eventoOp.get().getInicio());
+					Cliente cliente = eventoOp.get().getCliente();
+					cliente.setAtivo(false);
+					iCliente.save(cliente);
+
+					List<Evento> eventos = iCustomEventoImpl.findEventosFuturosCliente(eventoOp.get().getCliente(), eventoOp.get().getInicio());
 					iEvento.deleteAll(eventos);
-					iCliente.inativarCliente(eventoOp.get().getCliente().getId());
 				} else {
 					iEvento.delete(eventoOp.get());
 				}

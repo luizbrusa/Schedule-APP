@@ -5,13 +5,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum DiaSemana {
 
-	SUNDAY ("Domingo"),
-	MONDAY ("Segunda-Feira"),
-	TUESDAY ("Terça-Feira"),
-	WEDNESDAY ("Quarta-Feira"),
-	THURSDAY ("Quinta-Feira"),
-	FRIDAY ("Sexta-Feira"),
-	SATURDAY ("Sábado");
+	D1_SUNDAY ("Domingo"),
+	D2_MONDAY ("Segunda-Feira"),
+	D3_TUESDAY ("Terça-Feira"),
+	D4_WEDNESDAY ("Quarta-Feira"),
+	D5_THURSDAY ("Quinta-Feira"),
+	D6_FRIDAY ("Sexta-Feira"),
+	D7_SATURDAY ("Sábado");
 
     private String descricao;
     
@@ -20,7 +20,7 @@ public enum DiaSemana {
 	}
     
     public String getValue() {
-		return this.name();
+    	return this.name();
 	}
 
     public String getDescricao() {

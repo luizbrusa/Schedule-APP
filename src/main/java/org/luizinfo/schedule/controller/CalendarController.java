@@ -7,15 +7,17 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.luizinfo.schedule.model.Cliente;
 import org.luizinfo.schedule.model.Evento;
 import org.luizinfo.schedule.model.Frequencia;
-import org.luizinfo.schedule.model.ProcessoAutomatico;
 import org.luizinfo.schedule.repository.ICliente;
+import org.luizinfo.schedule.repository.ICustomEventoImpl;
 import org.luizinfo.schedule.repository.IEvento;
-import org.luizinfo.schedule.repository.IProcessoAutomatico;
+import org.luizinfo.schedule.service.SequenceGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,37 +33,39 @@ import io.swagger.annotations.Api;
 
 @RestController
 @Api(tags = "Métodos do Controller do Calendar")
-@RequestMapping(value = "/")
+@RequestMapping(value = "")
+@SuppressWarnings("deprecation")
 public class CalendarController {
 	
 	@Autowired
 	private IEvento iEvento;
 	
 	@Autowired
-	private ICliente iCliente;
+	private ICustomEventoImpl iCustomEventoImpl;
 	
 	@Autowired
-	private IProcessoAutomatico iProcessoAutomatico;
-
-	@GetMapping
+	private ICliente iCliente;
+	
+	@GetMapping(value = "/")
 	public ModelAndView index() {
 	    ModelAndView modelAndView = new ModelAndView();
 	    modelAndView.setViewName("calendar");
 	    return modelAndView;
 	}
 
-	@GetMapping(value = "listarEventosCalendar")
+	@GetMapping(value = "/listarEventosCalendar")
 	@ResponseBody
 	public ResponseEntity<String> listarEventosCalenddar() {
 		List<Evento> eventos = iEvento.findAll();
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String retorno = "[";
 		
 		for (Evento evento : eventos) {
 			retorno += "{ " + 
 				    "\"id\":\"" + evento.getId() + "\"," +
 					"\"title\":\"" + evento.getTitulo() + "\"," +
-					"\"start\":\"" + evento.getInicio() + "\"," +
-					"\"end\":\"" + evento.getFim() + "\",";
+					"\"start\":\"" + fmt.format(evento.getInicio()) + "\"," +
+					"\"end\":\"" + fmt.format(evento.getFim()) + "\",";
 			if (evento.getCliente() == null) {
 				retorno += "\"backgroundColor\": \"blue\",";
 			} else {
@@ -84,7 +88,7 @@ public class CalendarController {
 		return new ResponseEntity<String>(retorno, HttpStatus.OK);
 	}
 
-	@PostMapping(value = "programarMeses")
+	@PostMapping(value = "/programarMeses")
 	@ResponseBody
 	public ResponseEntity<?> programarMeses(@RequestParam(name = "ano") String ano, 
 			@RequestParam(name = "mesInicial") String mesInicial,
@@ -112,10 +116,9 @@ public class CalendarController {
 				       .with(TemporalAdjusters.lastDayOfMonth());
 			
 			for (LocalDate data = localDataInicial; data.isEqual(localDataFinal) || data.isBefore(localDataFinal); data = data.plusDays(1)) {
-				
-				if (!iProcessoAutomatico.existeProcessamentoData(data.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))) {
-					adicionaEventosData(data);
-				}
+				Calendar cal = Calendar.getInstance();
+				cal.set(data.getYear(), data.getMonthValue() -1, data.getDayOfMonth(), 23, 59, 59);
+				adicionaEventosData(cal.getTime());
 			}
 
 			return new ResponseEntity<String>("Programação Concluída!", HttpStatus.OK);
@@ -125,46 +128,87 @@ public class CalendarController {
 		}	
 	}
 	
-	private void adicionaEventosData(LocalDate data) {
-		List<Cliente> clientes = iCliente.findAllByStatusDiaSemana(true, data.getDayOfWeek().toString());
-		ProcessoAutomatico processoAutomatico = null;
+	private void adicionaEventosData(Date data) {
+		List<Cliente> clientes = iCliente.findAllByStatusDiaSemana(true, formatDiaSemana(data.getDay()));
 
 		for (Cliente cliente : clientes) {
-			if (!cliente.getFrequencia().equals(Frequencia.WEEKLY)) {
+			Evento ultimoEventoCliente = iCustomEventoImpl.findUltimoEventoCliente(cliente, data);
+			
+			TimeUnit time = TimeUnit.DAYS; 
+	        long diffDays = ultimoEventoCliente == null ? 999: time.convert((data.getTime() - ultimoEventoCliente.getInicio().getTime()), TimeUnit.MILLISECONDS);
+			if (cliente.getFrequencia().equals(Frequencia.WEEKLY)) {
+				if (diffDays < 7)
+					continue;
+			} else {
 				if (cliente.getFrequencia().equals(Frequencia.MONTHLY)) {
-					if (iEvento.existeEventoAutomaticoClienteMes(cliente,
-							data.getYear(),
-							data.getMonthValue())) {
+					if (diffDays < 28) {
 						continue;
 					}
 				} else {
-					if (iEvento.existeEventoAutomaticoClienteQuinzena(cliente,
-							data.getYear(),
-							data.getMonthValue(),
-							data.getDayOfMonth() <= 15 ? 1 : 16, 
-							data.getDayOfMonth() <= 15 ? 15 : 31)) {
+					if (diffDays < 14) {
 						continue;
 					}
 				}
 			}
 
-			if (processoAutomatico == null) {
-				processoAutomatico = new ProcessoAutomatico();
-				processoAutomatico.setData(data.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-				iProcessoAutomatico.save(processoAutomatico);
-			}
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(data.getYear()+1900, 
+					data.getMonth(), 
+					data.getDate(), 
+					Integer.parseInt(cliente.getHoraInicio().substring(0, 2)),
+					Integer.parseInt(cliente.getHoraInicio().substring(3, 5)));
+			Date inicio = calendar.getTime();
+			
+			calendar.set(data.getYear()+1900, 
+					data.getMonth(), 
+					data.getDate(), 
+					Integer.parseInt(cliente.getHoraFim().substring(0, 2)),
+					Integer.parseInt(cliente.getHoraFim().substring(3, 5)));
+			Date fim = calendar.getTime();
 			
 			Evento evento = new Evento();
-
+			evento.setId(SequenceGeneratorService.generateSequence(Evento.SEQUENCE_NAME));
 			evento.setCliente(cliente);
 			evento.setTitulo(cliente.getApelido());
-			evento.setInicio(data.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "T" + cliente.getHoraInicio() + ":00");
-			evento.setFim(data.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "T" + cliente.getHoraFim() + ":00");
+			evento.setInicio(inicio);
+			evento.setFim(fim);
 			evento.setDiaInteiro(false);
-			evento.setProcessoAutomatico(processoAutomatico);
-			
 			iEvento.save(evento);
 		}
 	}
+	
+    public String formatDiaSemana(int value) {
+    	switch (value+1) {
+		case 1:
+			return "D1_SUNDAY";
+		case 2:
+			return "D2_MONDAY";
+		case 3:
+			return "D3_TUESDAY";
+		case 4:
+			return "D4_WEDNESDAY";
+		case 5:
+			return "D5_THURSDAY";
+		case 6:
+			return "D6_FRIDAY";
+		case 7:
+			return "D7_SATURDAY";
+		default:
+			return "";
+		}
+    }
+    
+	public int getLastDayOfMonth(Date data) {
+    	switch (data.getMonth()) {
+    	case 1:
+    		return 28;
+    	case 3, 5, 8, 10:
+    		return 30;
+		case 0, 2, 4, 6, 7, 9, 11:
+			return 31;
+		default:
+			return 0;
+		}
+    }
 	
 }

@@ -1,46 +1,37 @@
 package org.luizinfo.schedule.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-@Entity
-@SequenceGenerator(name = "seq_evento", sequenceName = "seq_evento", initialValue = 1, allocationSize = 1)
+@Document("Evento")
 public class Evento implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	@Transient
+	public static final String SEQUENCE_NAME = "evento_seq";
+
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_evento")
 	private Long id;
 
-	@Column(nullable = false)
 	private String titulo;
 
-	@Column(nullable = false)
+    @Field(value = "dia_inteiro")
 	private boolean diaInteiro;
 
-	@Column(nullable = false)
-	private String inicio;
+	private Date inicio;
 
-	private String fim;
+	private Date fim;
 
-	@ManyToOne(optional = true, fetch = FetchType.EAGER)
-	@JoinColumn(name = "cliente_id")
+	@DBRef
 	private Cliente cliente;
-
-	@ManyToOne(optional = true, fetch = FetchType.EAGER)
-	@JoinColumn(name = "processo_automatico_id")
-	private ProcessoAutomatico processoAutomatico;
 
 	public Evento() {
 	}
@@ -69,19 +60,19 @@ public class Evento implements Serializable {
 		this.diaInteiro = diaInteiro;
 	}
 
-	public String getInicio() {
+	public Date getInicio() {
 		return inicio;
 	}
 
-	public void setInicio(String inicio) {
+	public void setInicio(Date inicio) {
 		this.inicio = inicio;
 	}
 
-	public String getFim() {
+	public Date getFim() {
 		return fim;
 	}
 
-	public void setFim(String fim) {
+	public void setFim(Date fim) {
 		this.fim = fim;
 	}
 
@@ -91,14 +82,6 @@ public class Evento implements Serializable {
 
 	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
-	}
-
-	public ProcessoAutomatico getProcessoAutomatico() {
-		return processoAutomatico;
-	}
-
-	public void setProcessoAutomatico(ProcessoAutomatico processoAutomatico) {
-		this.processoAutomatico = processoAutomatico;
 	}
 
 	@Override
@@ -121,7 +104,7 @@ public class Evento implements Serializable {
 	@Override
 	public String toString() {
 		return "Evento [id=" + id + ", titulo=" + titulo + ", diaInteiro=" + diaInteiro + ", inicio=" + inicio
-				+ ", fim=" + fim + ", cliente=" + cliente + ", processoAutomatico=" + processoAutomatico + "]";
+				+ ", fim=" + fim + ", cliente=" + cliente + "]";
 	}
 
 }

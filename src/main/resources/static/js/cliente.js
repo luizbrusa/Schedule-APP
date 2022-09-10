@@ -13,11 +13,12 @@ function listarClientes(){
 				$('#tabelaClientes > tbody')
 					.append('<tr id="' + response[i].id + '"><td>' + response[i].id + '</td>' +
                             '<td>' + response[i].nome + '</td>' +
-                            '<td>' + response[i].valor + '</td>' +
                             '<td>' + response[i].telefone + '</td>' +
-                            '<td>' + response[i].diaSemana.descricao + '</td>' +
+                            '<td>' + response[i].valor + '</td>' +
                             '<td>' + response[i].formaPagamento.descricao + '</td>' +
                             '<td>' + response[i].frequencia.descricao + '</td>' +
+                            '<td>' + response[i].diaSemana.descricao + '</td>' +
+                            '<td>' + response[i].horaInicio + " | " + response[i].horaFim + '</td>' +
                             '<td>' + ((response[i].ativo) ? "Sim" : "Não") + '</td>' +
 						    '<td><button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="editaCliente(' + response[i].id + ')">Editar</button></td></tr>');
 			}

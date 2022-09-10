@@ -5,7 +5,9 @@ import java.util.Optional;
 
 import org.luizinfo.schedule.model.Cliente;
 import org.luizinfo.schedule.repository.ICliente;
+import org.luizinfo.schedule.service.SequenceGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +32,8 @@ public class ClienteController implements CrudController<Cliente> {
 	@Override
 	public ResponseEntity<?> listar() {
 		
-		List<Cliente> clientes = iCliente.findAll();
+		List<Cliente> clientes = iCliente.findAll(Sort.by("ativo").descending()
+				.and(Sort.by("dia_semana").ascending()));
 		
 		if (clientes.size() > 0) {
 			return new ResponseEntity<List<Cliente>>(clientes, HttpStatus.OK);
@@ -46,6 +49,7 @@ public class ClienteController implements CrudController<Cliente> {
 			return new ResponseEntity<String>("ID do Registro não deve ser Informado para cadastrar!", HttpStatus.BAD_REQUEST);
 		}
 		
+		objeto.setId(SequenceGeneratorService.generateSequence(Cliente.SEQUENCE_NAME));
 		Cliente clienteAux = iCliente.save(objeto);
 		
 		return new ResponseEntity<Cliente>(clienteAux, HttpStatus.CREATED);

@@ -4,72 +4,57 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Entity
-@SequenceGenerator(name = "seq_cliente", sequenceName = "seq_cliente", initialValue = 1, allocationSize = 1)
+@Document("Cliente")
 public class Cliente implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	@Transient
+	public static final String SEQUENCE_NAME = "cliente_seq";
+
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_cliente")
 	private Long id;
 
-	@Column(nullable = false)
 	private String nome;
 
-	@Column(nullable = false)
 	private String apelido;
 
-	@Column(nullable = false)
 	private String endereco;
 
 	private Double valor;
 
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
+    @Field(name = "forma_pagamento")
 	private FormaPagamento formaPagamento;
 
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
+    @Field(name = "dia_semana")
 	private DiaSemana diaSemana;
 
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
+    @Field(name = "frequencia")
 	private Frequencia frequencia;
 
-	@Column(nullable = false)
+    @Field(name = "tipo_limpeza")
 	private String tipoLimpeza;
 
-	@Column(nullable = false)
+    @Field(name = "hora_inicio")
 	private String horaInicio;
 
-	@Column(nullable = false)
+    @Field(name = "hora_fim")
 	private String horaFim;
 
 	private String observacao;
 
-	@Column(nullable = false)
 	private boolean ativo;
 
-	@Column(nullable = true)
 	private String telefone;
 
 	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "cliente")
 	private List<Evento> eventos;
 
 	public Cliente() {
