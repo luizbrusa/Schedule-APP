@@ -112,7 +112,6 @@ function salvarCliente(){
 		method = "POST";
 	}
 
-	console.log("Tipo Limpeza: ", tipoLimpeza)
 	$.ajax({
 		method: method,
 		url: url,

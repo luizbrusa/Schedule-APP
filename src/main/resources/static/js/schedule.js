@@ -59,14 +59,15 @@ function cadastroEventoModal(info) {
 				$("#cliente").val(nomeCliente);
 				$("#id").val(response.id);
 				$("#title").val(response.titulo);
-				$("#start").val(moment(dataInicio).format('YYYY-MM-DD'));
+				$("#start").val(moment(dataInicio).utc().format('YYYY-MM-DD'));
 				
 				if (response.diaInteiro){
 					$("#startTime").val(document.getElementById("startTime").min);
 					$("#endTime").val(document.getElementById("endTime").max);
 				} else {
-					$("#startTime").val(moment(dataInicio).format('HH:mm'));
-					$("#endTime").val(moment(dataFim).format('HH:mm'));
+					console.log(dataInicio);
+					$("#startTime").val(moment(dataInicio).utc().format("HH:mm"));
+					$("#endTime").val(moment(dataFim).utc().format('HH:mm'));
 				}
 				
 				$('#eventoModal').modal("show");
@@ -167,11 +168,17 @@ function salvarEventoModal(){
 		allDay = false;
 	}
 	
+	var inicio = new Date($("#start").val() + "T" + $("#startTime").val());
+	inicio = moment(inicio).format('YYYY-MM-DD[T]HH:mm:ss');
+	
+	var fim = new Date($("#start").val() + "T" + $("#endTime").val());
+	fim = moment(fim).format('YYYY-MM-DD[T]HH:mm:ss');
+
 	salvarEvento($("#id").val(), 
 			$("#title").val(), 
 			allDay, 
-			$("#start").val() + "T" + $("#startTime").val(), 
-			$("#start").val() + "T" + $("#endTime").val(), 
+			inicio,
+			fim,
 			$("#idCliente").val());
 	
 	$('#eventoModal').modal("hide");
@@ -189,12 +196,18 @@ function salvarEventoDrop(info) {
 			} else {
 				idCliente = null;
 			}
+
+			var inicio = new Date(info.event.start);
+			inicio = moment(inicio).utc().format('YYYY-MM-DD[T]HH:mm:ss');
+			
+			var fim = new Date(info.event.end);
+			fim = moment(fim).utc().format('YYYY-MM-DD[T]HH:mm:ss');
 			
 			salvarEvento(info.event.id,
 					info.event.title,
 					info.event.allDay,
-					info.event.start,
-					info.event.end,
+					inicio,
+					fim,
 					idCliente.toString());
 		}
 	}).fail(function (xhr, status, errorThrown) {
@@ -203,12 +216,6 @@ function salvarEventoDrop(info) {
 }
 
 function salvarEvento(id,title,allDay,start,end,idCliente){
-	var inicio = new Date(start);
-	inicio = moment(inicio).format('YYYY-MM-DD[T]HH:mm:ss');
-	
-	var fim = new Date(end);
-	fim = moment(fim).format('YYYY-MM-DD[T]HH:mm:ss');
-
 	var url = "";
 	var method = "";
 	var evento = null;
@@ -217,8 +224,8 @@ function salvarEvento(id,title,allDay,start,end,idCliente){
 		evento = {id : id,
 				titulo : title, 
 				diaInteiro : allDay, 
-				inicio : inicio,
-				fim : fim,
+				inicio : start,
+				fim : end,
 				processoAutomatico : null,
 				cliente : {id : idCliente.trim()}
 		};
@@ -226,8 +233,8 @@ function salvarEvento(id,title,allDay,start,end,idCliente){
 		evento = {id : id,
 				titulo : title, 
 				diaInteiro : allDay, 
-				inicio : inicio,
-				fim : fim,
+				inicio : start,
+				fim : end,
 				processoAutomatico : null,
 				cliente : null
 		};
@@ -310,7 +317,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	    editable: true,
 	    droppable: true, // this allows things to be dropped onto the calendar
 	    locale: 'en-US',
-	    timeZone: 'CST',
+	    timeZone: 'UTC',
 	    drop: function(info) {
 	        cadastroEventoModal(info);
 	    },

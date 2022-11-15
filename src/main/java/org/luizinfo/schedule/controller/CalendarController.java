@@ -63,14 +63,6 @@ public class CalendarController {
 		String retorno = "[";
 		
 		for (Evento evento : eventos) {
-//			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("CST"), Locale.US);
-//			cal.setTime(evento.getInicio());
-//			cal.add(Calendar.HOUR, 5);
-//			evento.setInicio(cal.getTime());
-//			cal.setTime(evento.getFim());
-//			cal.add(Calendar.HOUR, 5);
-//			evento.setFim(cal.getTime());
-
 			retorno += "{ " + 
 				    "\"id\":\"" + evento.getId() + "\"," +
 					"\"title\":\"" + evento.getTitulo() + "\"," +
@@ -106,8 +98,8 @@ public class CalendarController {
 
 		try {
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-			Calendar calDataInicial = Calendar.getInstance(TimeZone.getTimeZone("CST"), Locale.US);
-			Calendar calDataFinal = Calendar.getInstance(TimeZone.getTimeZone("CST"), Locale.US);
+			Calendar calDataInicial = Calendar.getInstance();
+			Calendar calDataFinal = Calendar.getInstance();
 	
 			if (Integer.parseInt(mesInicial) < 10) {
 				calDataInicial.setTime(formatter.parse(ano + "-0" + Integer.parseInt(mesInicial) + "-01"));
@@ -126,7 +118,7 @@ public class CalendarController {
 				       .with(TemporalAdjusters.lastDayOfMonth());
 			
 			for (LocalDate data = localDataInicial; data.isEqual(localDataFinal) || data.isBefore(localDataFinal); data = data.plusDays(1)) {
-				Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("CST"), Locale.US);
+				Calendar cal = Calendar.getInstance();
 				cal.set(data.getYear(), data.getMonthValue() -1, data.getDayOfMonth(), 23, 59, 59);
 				adicionaEventosData(cal.getTime());
 			}
@@ -167,7 +159,7 @@ public class CalendarController {
 				}
 			}
 
-			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("CST"), Locale.US);
+			Calendar calendar = Calendar.getInstance();
 			calendar.set(data.getYear()+1900, 
 					data.getMonth(), 
 					data.getDate(), 
