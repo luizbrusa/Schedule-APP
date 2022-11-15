@@ -309,7 +309,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	    },
 	    editable: true,
 	    droppable: true, // this allows things to be dropped onto the calendar
-	    locale: 'pt-br',
+	    locale: 'en-US',
+	    timeZone: 'CST',
 	    drop: function(info) {
 	        cadastroEventoModal(info);
 	    },

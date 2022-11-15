@@ -7,7 +7,9 @@ public enum Frequencia {
 
 	WEEKLY("Semanal"),
 	FORTNIGHT("Quinzenal"),
-	MONTHLY("Mensal");
+	MONTHLY("Mensal"),
+	BIMONTLY("Bimestral"),
+	QUARTERLY("Trimestral");
 	
 	private String descricao;
 	

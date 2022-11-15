@@ -1,7 +1,10 @@
 package org.luizinfo.schedule.controller;
 
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import org.luizinfo.schedule.model.Cliente;
 import org.luizinfo.schedule.model.Evento;
@@ -91,6 +94,14 @@ public class EventoController implements CrudController<Evento> {
 		Optional<Evento> eventoOp = iEvento.findById(id);
 		
 		if (eventoOp.isPresent()) {
+			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("CST"), Locale.US);
+			cal.setTime(eventoOp.get().getInicio());
+			cal.add(Calendar.HOUR, 5);
+			eventoOp.get().setInicio(cal.getTime());
+			cal.setTime(eventoOp.get().getFim());
+			cal.add(Calendar.HOUR, 5);
+			eventoOp.get().setFim(cal.getTime());
+
 			if (eventoOp.get().getCliente() != null) {
 				eventoOp.get().setCliente(iCliente.findById(eventoOp.get().getCliente().getId()).get());
 			}
