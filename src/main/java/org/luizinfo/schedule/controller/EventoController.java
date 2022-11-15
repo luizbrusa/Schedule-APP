@@ -94,13 +94,13 @@ public class EventoController implements CrudController<Evento> {
 		Optional<Evento> eventoOp = iEvento.findById(id);
 		
 		if (eventoOp.isPresent()) {
-			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("CST"), Locale.US);
-			cal.setTime(eventoOp.get().getInicio());
-			cal.add(Calendar.HOUR, 5);
-			eventoOp.get().setInicio(cal.getTime());
-			cal.setTime(eventoOp.get().getFim());
-			cal.add(Calendar.HOUR, 5);
-			eventoOp.get().setFim(cal.getTime());
+//			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("CST"), Locale.US);
+//			cal.setTime(eventoOp.get().getInicio());
+//			cal.add(Calendar.HOUR, 5);
+//			eventoOp.get().setInicio(cal.getTime());
+//			cal.setTime(eventoOp.get().getFim());
+//			cal.add(Calendar.HOUR, 5);
+//			eventoOp.get().setFim(cal.getTime());
 
 			if (eventoOp.get().getCliente() != null) {
 				eventoOp.get().setCliente(iCliente.findById(eventoOp.get().getCliente().getId()).get());

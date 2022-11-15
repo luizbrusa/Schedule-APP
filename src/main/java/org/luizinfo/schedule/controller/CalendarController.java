@@ -63,13 +63,13 @@ public class CalendarController {
 		String retorno = "[";
 		
 		for (Evento evento : eventos) {
-			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("CST"), Locale.US);
-			cal.setTime(evento.getInicio());
-			cal.add(Calendar.HOUR, 5);
-			evento.setInicio(cal.getTime());
-			cal.setTime(evento.getFim());
-			cal.add(Calendar.HOUR, 5);
-			evento.setFim(cal.getTime());
+//			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("CST"), Locale.US);
+//			cal.setTime(evento.getInicio());
+//			cal.add(Calendar.HOUR, 5);
+//			evento.setInicio(cal.getTime());
+//			cal.setTime(evento.getFim());
+//			cal.add(Calendar.HOUR, 5);
+//			evento.setFim(cal.getTime());
 
 			retorno += "{ " + 
 				    "\"id\":\"" + evento.getId() + "\"," +
