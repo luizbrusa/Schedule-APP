@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@Api(tags = "Métodos do Controller de Eventos")
+@Tag(name = "Eventos", description = "Métodos do Controller de Eventos")
 @RequestMapping(value = "/evento")
 public class EventoController implements CrudController<Evento> {
 
@@ -100,7 +100,7 @@ public class EventoController implements CrudController<Evento> {
 		}
 	}
 
-	@ApiOperation(value = "Excluir Eventos com Exclusão dos Futuros já cadastrados")
+	@Operation(summary = "Excluir Eventos com Exclusão dos Futuros já cadastrados")
 	@DeleteMapping(value = "id/{id}/excluirFuturos/{excluirFuturos}")
 	@ResponseBody
 	public ResponseEntity<String> excluirEvento(@PathVariable(name = "id") Long id, 

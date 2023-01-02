@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@Api(tags = "Métodos do Controller de Clientes")
+@Tag(name = "Clientes", description = "Métodos do Controller de Clientes")
 @RequestMapping(value = "/cliente")
 public class ClienteController implements CrudController<Cliente> {
 
@@ -92,7 +92,7 @@ public class ClienteController implements CrudController<Cliente> {
 		}
 	}
 	
-	@ApiOperation(value = "Localizar Registros por Nome")
+	@Operation(description = "Localizar Registros por Nome")
 	@GetMapping(value = "/nome/{nome}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> listarClientesPorNome(@PathVariable(value = "nome") String nome) {
@@ -101,7 +101,7 @@ public class ClienteController implements CrudController<Cliente> {
    		return new ResponseEntity<List<Cliente>>(clientes, HttpStatus.OK);
     }
 
-	@ApiOperation(value = "Localizar Clientes Ativos")
+	@Operation(description = "Localizar Clientes Ativos")
     @GetMapping(value = "/ativos", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> listarClientesAtivos() {
@@ -114,7 +114,7 @@ public class ClienteController implements CrudController<Cliente> {
 		}
     }
 
-	@ApiOperation(value = "Localizar Clientes por Nome")
+	@Operation(description = "Localizar Clientes por Nome")
 	@GetMapping(value = "/cadastro")
 	public ModelAndView cadCliente() {
 	    ModelAndView modelAndView = new ModelAndView();

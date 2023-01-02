@@ -9,8 +9,6 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import org.luizinfo.schedule.model.Cliente;
@@ -31,10 +29,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@Api(tags = "Métodos do Controller do Calendar")
+@Tag(name = "Calendar", description = "Métodos do Controller do Calendar")
 @RequestMapping(value = "")
 @SuppressWarnings("deprecation")
 public class CalendarController {
