@@ -12,7 +12,7 @@ This project uses several open source packages:
 - [Spring Boot](https://spring.io/projects/spring-boot)
 - [Bootstrap](https://getbootstrap.com/)
 - [MongoDB](https://www.mongodb.com/home)
-- [SpringDoc Swagger Open API] (https://springdoc.org)
+- [SpringDoc Swagger Open API](https://springdoc.org)
 
 ---
 
