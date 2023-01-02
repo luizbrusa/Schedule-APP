@@ -1,8 +1,6 @@
 # Schedule-APP
  App Developed to Schedule tasks of clients in a Calendar using Full Calendar JavaScript
- Schedule APP, developed with Java Spring Boot, RESTFull API, Thymeleaf and PostgreSQL Database.
-
- [Access Here](http://schedule-app-luiz.herokuapp.com/scheduleAPP/) the live Application published on [Heroku](https://www.heroku.com).
+ Schedule APP, developed with Java Spring Boot, RESTFull API, Thymeleaf, SpringDoc Open API and MongoDB NoSQL Database.
 
 ## Credits©️
 
@@ -13,7 +11,8 @@ This project uses several open source packages:
 - [Thymeleaf](https://www.thymeleaf.org/)
 - [Spring Boot](https://spring.io/projects/spring-boot)
 - [Bootstrap](https://getbootstrap.com/)
-- [PostgreSQL](https://www.postgresql.org/)
+- [MongoDB](https://www.mongodb.com/home)
+- [SpringDoc Swagger Open API] (https://springdoc.org)
 
 ---
 
