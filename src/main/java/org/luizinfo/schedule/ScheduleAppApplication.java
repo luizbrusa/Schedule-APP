@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 @ComponentScan(basePackages = "org.luizinfo.schedule.*")
 @EnableTransactionManagement
-@EnableAutoConfiguration
 public class ScheduleAppApplication {
 
 	@PostConstruct
